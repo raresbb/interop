@@ -1,0 +1,12 @@
+/home/rares/dev/interop/build/linux/x64/debug/bundle/testffi
+/home/rares/dev/interop/build/linux/x64/debug/bundle/data/icudtl.dat
+/home/rares/dev/interop/build/linux/x64/debug/bundle/lib/libflutter_linux_gtk.so
+/home/rares/dev/interop/build/linux/x64/debug/bundle/lib/libapi.so
+/home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/FontManifest.json
+/home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/fonts/MaterialIcons-Regular.otf
+/home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.json
+/home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf
+/home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/version.json
+/home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/NOTICES.Z
+/home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag
+/home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/kernel_blob.bin

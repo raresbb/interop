@@ -1,0 +1,6 @@
+LIBRARY api
+EXPORTS
+    getAngleFR
+    getAngleFL
+    getAngleRR
+    getAngleRL
