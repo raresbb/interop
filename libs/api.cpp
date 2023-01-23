@@ -1,48 +1,64 @@
-#ifdef WIN32
-#define EXPORT __declspec(dllexport)
-#else
-#define EXPORT extern "C" __attribute__((visibility("default"))) __attribute__((used))
-#endif
-
-#include <cstring>
-#include <ctype.h>
+#include <iostream>
 #include <thread>
 #include <random>
-#include <functional>
 #include <atomic>
-
-std::atomic<bool> stop_thread{false};
-std::function<void(double, double, double, double)> callback;
-
-double angle_FR = 0.0;
-double angle_FL = 0.0;
-double angle_RR = 0.0;
-double angle_RL = 0.0;
+#include <string>
+#include <fcntl.h>
+#include <unistd.h>
+#include <functional>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 std::mt19937 generator(std::random_device{}());
-std::uniform_real_distribution<double> distribution(0.0, 90.0);
+std::atomic<bool> stop_thread{false};
 
-void updateAnglesThread() {
+struct Angles {
+    double angle_FR;
+    double angle_FL;
+    double angle_RR;
+    double angle_RL;
+};
+
+// function that updates the angles struct
+void updateAngles(Angles* angles) {
+    std::uniform_real_distribution<double> distribution(-1.0, 1.0);
+    auto random = std::bind(distribution, generator);
     while (!stop_thread) {
-        angle_FR = distribution(generator);
-        angle_FL = distribution(generator);
-        angle_RR = distribution(generator);
-        angle_RL = distribution(generator);
-        if (callback) {
-            callback(angle_FR, angle_FL, angle_RR, angle_RL);
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        angles->angle_FR = random();
+        angles->angle_FL = random();
+        angles->angle_RR = random();
+        angles->angle_RL = random();
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 }
 
-EXPORT
-void startUpdates(std::function<void(double, double, double, double)> cb) {
-    callback = cb;
-    std::thread t(updateAnglesThread);
-    t.detach();
-}
+int main() {
+    // create a named pipe
+    if (mkfifo("/tmp/AnglesPipe", 0666) == -1) {
+        std::cout << "Error creating named pipe" << std::endl;
+        return 1;
+    }
 
-EXPORT
-void stopUpdates() {
-    stop_thread = true;
+    Angles angles;
+    // start the thread that updates the angles struct
+    std::thread t(updateAngles, &angles);
+
+    int pipe;
+    // open the pipe for writing
+    pipe = open("/tmp/AnglesPipe", O_WRONLY);
+    if (pipe == -1) {
+        std::cout << "Error opening named pipe" << std::endl;
+        return 1;
+    }
+
+    while (!stop_thread) {
+        // write the angles struct to the pipe
+        write(pipe, &angles, sizeof(angles));
+    }
+
+    // close the pipe
+    close(pipe);
+
+    t.join();
+    return 0;
 }

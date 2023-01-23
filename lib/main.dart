@@ -1,34 +1,9 @@
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:ffi/ffi.dart';
 import 'package:provider/provider.dart';
-
-
-class FFIBridge {
-    final _startUpdates = DynamicLibrary.open(
-      Platform.isWindows ? 'api.dll' : 'libapi.so').
-        lookupFunction<Void Function(Pointer<NativeFunction<Void Function(Double, Double, Double, Double)>>), 
-      void Function(Pointer<NativeFunction<Void Function(Double, Double, Double, Double)>>)>('startUpdates');
-
-  final _stopAngles = DynamicLibrary.open(
-    Platform.isWindows ? 'api.dll' : 'libapi.so').
-      lookupFunction<Void Function(), void Function()>('stopUpdates');
-
-  void startUpdates(BuildContext context) {
-    final _callback = Pointer.fromFunction<Void Function(Double, Double, Double, Double)>(callback, context);
-    _startUpdates(_callback);
-  }
-
-  void stopUpdates() {
-    _stopAngles();
-  }
-  void callback(double angleFR, double angleFL, double angleRR, double angleRL, BuildContext context) {
-    final anglesModel = Provider.of<AnglesModel>(context, listen: false);
-    anglesModel.updateAngles([angleFR, angleFL, angleRR, angleRL]);
-  }
-  
-}
 
 
 class AnglesModel with ChangeNotifier {
@@ -46,13 +21,32 @@ class AnglesModel with ChangeNotifier {
   }
 }
 
+class AnglesReader {
+  final _pipe = File('/tmp/AnglesPipe');
+  final BuildContext _context;
+
+  AnglesReader(this._context);
+
+  void start() {
+    _pipe.openRead().listen((data) {
+      final byteData = Uint8List.fromList(data).buffer;
+      final doubleList = byteData.asFloat64List();
+      updateAngles([doubleList[0], doubleList[1], doubleList[2], doubleList[3]]);
+    });
+  }
+
+  void updateAngles(List<double> angles) {
+    final anglesModel = Provider.of<AnglesModel>(_context, listen: false);
+    anglesModel.updateAngles(angles);
+  }
+}
+
+
 void main() {
-  final ffiBridge = FFIBridge();
-  ffiBridge.startUpdates(context);
   runApp(
     ChangeNotifierProvider(
-    create: (context) => AnglesModel(),
-    child: const MyApp(),
+      create: (context) => AnglesModel(),
+      child: const MyApp(),
     ),
   );
 }
