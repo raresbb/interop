@@ -1,0 +1,1 @@
+/usr/bin/c++  -Wall -Werror -pthread CMakeFiles/api.dir/api.cpp.o -o build/api  -lrt -lpthread 
