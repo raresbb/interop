@@ -361,3 +361,11 @@ Parsed C implicit link information from above output:
   implicit fwks: []
 
 
+Determining if the function pthread_create exists in the pthread passed with the following output:
+Change Dir: /home/rares/dev/interop/build/linux/x64/debug/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_ec992 && [1/2] Building C object CMakeFiles/cmTC_ec992.dir/CheckFunctionExists.c.o
+[2/2] Linking C executable cmTC_ec992
+
+
+

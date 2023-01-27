@@ -21,5 +21,5 @@ set(SOURCES api.cpp)
 add_executable(api ${SOURCES})
 
 # Link the executable with the thread library
-target_link_libraries(api Threads::Threads rt)
+target_link_libraries(api Threads::Threads)
 

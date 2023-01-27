@@ -162,7 +162,7 @@ build install/strip: phony CMakeFiles/install/strip.util
 # =============================================================================
 
 # =============================================================================
-# Object build statements for SHARED_LIBRARY target api
+# Object build statements for EXECUTABLE target api
 
 
 #############################################
@@ -171,29 +171,27 @@ build install/strip: phony CMakeFiles/install/strip.util
 build cmake_object_order_depends_target_api: phony || libs/CMakeFiles/api.dir
 
 build libs/CMakeFiles/api.dir/api.cpp.o: CXX_COMPILER__api_Debug /home/rares/dev/interop/linux/libs/api.cpp || cmake_object_order_depends_target_api
-  DEFINES = -Dapi_EXPORTS
   DEP_FILE = libs/CMakeFiles/api.dir/api.cpp.o.d
-  FLAGS = -g -fPIC -std=gnu++11
+  FLAGS = -Wall -Werror -pthread -g -std=gnu++14
   OBJECT_DIR = libs/CMakeFiles/api.dir
   OBJECT_FILE_DIR = libs/CMakeFiles/api.dir
 
 
 # =============================================================================
-# Link build statements for SHARED_LIBRARY target api
+# Link build statements for EXECUTABLE target api
 
 
 #############################################
-# Link the shared library libs/libapi.so
+# Link the executable build/api
 
-build libs/libapi.so: CXX_SHARED_LIBRARY_LINKER__api_Debug libs/CMakeFiles/api.dir/api.cpp.o | /home/rares/dev/interop/linux/libs/exports.def
-  LANGUAGE_COMPILE_FLAGS = -g
+build build/api: CXX_EXECUTABLE_LINKER__api_Debug libs/CMakeFiles/api.dir/api.cpp.o
+  FLAGS = -Wall -Werror -pthread -g
+  LINK_LIBRARIES = -lpthread
   OBJECT_DIR = libs/CMakeFiles/api.dir
   POST_BUILD = :
   PRE_LINK = :
-  SONAME = libapi.so
-  SONAME_FLAG = -Wl,-soname,
-  TARGET_FILE = libs/libapi.so
-  TARGET_PDB = api.so.dbg
+  TARGET_FILE = build/api
+  TARGET_PDB = api.dbg
 
 
 #############################################
@@ -356,11 +354,9 @@ build /home/rares/dev/interop/linux/flutter/ephemeral/libflutter_linux_gtk.so /h
 # =============================================================================
 # Target aliases.
 
-build api: phony libs/libapi.so
+build api: phony build/api
 
 build flutter_assemble: phony flutter/flutter_assemble
-
-build libapi.so: phony libs/libapi.so
 
 build testffi: phony intermediates_do_not_run/testffi
 
@@ -386,7 +382,7 @@ build flutter/all: phony
 #############################################
 # Folder: /home/rares/dev/interop/build/linux/x64/debug/libs
 
-build libs/all: phony libs/libapi.so
+build libs/all: phony build/api
 
 # =============================================================================
 # Built-in targets
@@ -395,14 +391,14 @@ build libs/all: phony libs/libapi.so
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja: RERUN_CMAKE | /home/rares/dev/interop/linux/CMakeLists.txt /home/rares/dev/interop/linux/flutter/CMakeLists.txt /home/rares/dev/interop/linux/flutter/ephemeral/generated_config.cmake /home/rares/dev/interop/linux/flutter/generated_plugins.cmake /home/rares/dev/interop/linux/libs/CMakeLists.txt /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeCInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeCXXInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeCommonLanguageInclude.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeGenericSystem.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeInitializeConfigs.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeLanguageInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeSystemSpecificInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeSystemSpecificInitialize.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/CMakeCommonCompilerMacros.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/Clang-C.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/Clang-CXX.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/Clang.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/GNU.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindPackageMessage.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindPkgConfig.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-Clang-C.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-Clang-CXX.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-GNU-C.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-GNU-CXX.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-GNU.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.24.2/CMakeCCompiler.cmake CMakeFiles/3.24.2/CMakeCXXCompiler.cmake CMakeFiles/3.24.2/CMakeSystem.cmake
+build build.ninja: RERUN_CMAKE | /home/rares/dev/interop/linux/CMakeLists.txt /home/rares/dev/interop/linux/flutter/CMakeLists.txt /home/rares/dev/interop/linux/flutter/ephemeral/generated_config.cmake /home/rares/dev/interop/linux/flutter/generated_plugins.cmake /home/rares/dev/interop/linux/libs/CMakeLists.txt /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeCInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeCXXInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeCommonLanguageInclude.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeGenericSystem.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeInitializeConfigs.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeLanguageInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeSystemSpecificInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeSystemSpecificInitialize.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CheckCSourceCompiles.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CheckIncludeFile.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CheckLibraryExists.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/CMakeCommonCompilerMacros.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/Clang-C.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/Clang-CXX.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/Clang.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/GNU.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindPackageMessage.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindPkgConfig.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindThreads.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Internal/CheckSourceCompiles.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-Clang-C.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-Clang-CXX.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-GNU-C.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-GNU-CXX.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-GNU.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.24.2/CMakeCCompiler.cmake CMakeFiles/3.24.2/CMakeCXXCompiler.cmake CMakeFiles/3.24.2/CMakeSystem.cmake
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build /home/rares/dev/interop/linux/CMakeLists.txt /home/rares/dev/interop/linux/flutter/CMakeLists.txt /home/rares/dev/interop/linux/flutter/ephemeral/generated_config.cmake /home/rares/dev/interop/linux/flutter/generated_plugins.cmake /home/rares/dev/interop/linux/libs/CMakeLists.txt /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeCInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeCXXInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeCommonLanguageInclude.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeGenericSystem.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeInitializeConfigs.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeLanguageInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeSystemSpecificInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeSystemSpecificInitialize.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/CMakeCommonCompilerMacros.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/Clang-C.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/Clang-CXX.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/Clang.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/GNU.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindPackageMessage.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindPkgConfig.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-Clang-C.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-Clang-CXX.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-GNU-C.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-GNU-CXX.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-GNU.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.24.2/CMakeCCompiler.cmake CMakeFiles/3.24.2/CMakeCXXCompiler.cmake CMakeFiles/3.24.2/CMakeSystem.cmake: phony
+build /home/rares/dev/interop/linux/CMakeLists.txt /home/rares/dev/interop/linux/flutter/CMakeLists.txt /home/rares/dev/interop/linux/flutter/ephemeral/generated_config.cmake /home/rares/dev/interop/linux/flutter/generated_plugins.cmake /home/rares/dev/interop/linux/libs/CMakeLists.txt /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeCInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeCXXInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeCommonLanguageInclude.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeGenericSystem.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeInitializeConfigs.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeLanguageInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeSystemSpecificInformation.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CMakeSystemSpecificInitialize.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CheckCSourceCompiles.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CheckIncludeFile.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/CheckLibraryExists.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/CMakeCommonCompilerMacros.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/Clang-C.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/Clang-CXX.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/Clang.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Compiler/GNU.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindPackageMessage.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindPkgConfig.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/FindThreads.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Internal/CheckSourceCompiles.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-Clang-C.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-Clang-CXX.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-GNU-C.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-GNU-CXX.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux-GNU.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/Linux.cmake /opt/cmake-3.24.2-linux-x86_64/share/cmake-3.24/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.24.2/CMakeCCompiler.cmake CMakeFiles/3.24.2/CMakeCXXCompiler.cmake CMakeFiles/3.24.2/CMakeSystem.cmake: phony
 
 
 #############################################

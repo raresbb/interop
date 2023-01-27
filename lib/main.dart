@@ -1,10 +1,10 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:ffi/ffi.dart';
 import 'package:provider/provider.dart';
 
+int i = 0;
 
 class AnglesModel with ChangeNotifier {
   double angleFR = 0.0;
@@ -24,15 +24,28 @@ class AnglesModel with ChangeNotifier {
 class AnglesReader {
   final _pipe = File('/tmp/AnglesPipe');
   final BuildContext _context;
+  StreamSubscription? _subscription;
 
   AnglesReader(this._context);
 
   void start() {
-    _pipe.openRead().listen((data) {
-      final byteData = Uint8List.fromList(data).buffer;
-      final doubleList = byteData.asFloat64List();
-      updateAngles([doubleList[0], doubleList[1], doubleList[2], doubleList[3]]);
+    _subscription = _pipe.openRead().listen((data) {
+      print('the function started was called ${i} times');
+      try {
+        final byteData = Uint8List.fromList(data).buffer;
+        final doubleList = byteData.asFloat64List();
+        print(doubleList.length);
+        updateAngles([doubleList[0], doubleList[1], doubleList[2], doubleList[3]]);
+      } catch (e) {
+        print(e);
+        
+      }
+      i = i + 1;
     });
+  }
+
+  void stop() {
+    _subscription?.cancel();
   }
 
   void updateAngles(List<double> angles) {
@@ -40,7 +53,6 @@ class AnglesReader {
     anglesModel.updateAngles(angles);
   }
 }
-
 
 void main() {
   runApp(
@@ -50,7 +62,6 @@ void main() {
     ),
   );
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -77,33 +88,41 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late AnglesReader _anglesReader;
+  @override
+  void initState() {
+    super.initState();
+    _anglesReader = AnglesReader(context);
+    _anglesReader.start();
+  }
+
+  @override
+  void dispose() {
+     _anglesReader.stop();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final anglesModel = Provider.of<AnglesModel>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('AngleFR: ${anglesModel.angleFR}', style: const TextStyle(fontSize: 40)),
-            Text('AngleFL: ${anglesModel.angleFL}', style: const TextStyle(fontSize: 40)),
-            Text('AngleRR: ${anglesModel.angleRR}', style: const TextStyle(fontSize: 40)),
-            Text('AngleRL: ${anglesModel.angleRL}', style: const TextStyle(fontSize: 40)),
-          ],
+        child: Consumer<AnglesModel>(
+          builder: (context, anglesModel, child) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text('AngleFR: ${anglesModel.angleFR}', style: const TextStyle(fontSize: 40)),
+                Text('AngleFL: ${anglesModel.angleFL}', style: const TextStyle(fontSize: 40)),
+                Text('AngleRR: ${anglesModel.angleRR}', style: const TextStyle(fontSize: 40)),
+                Text('AngleRL: ${anglesModel.angleRL}', style: const TextStyle(fontSize: 40)),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 }
-
-
-
-
-
-
-
-
-
