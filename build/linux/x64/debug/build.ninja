@@ -172,7 +172,7 @@ build cmake_object_order_depends_target_api: phony || libs/CMakeFiles/api.dir
 
 build libs/CMakeFiles/api.dir/api.cpp.o: CXX_COMPILER__api_Debug /home/rares/dev/interop/linux/libs/api.cpp || cmake_object_order_depends_target_api
   DEP_FILE = libs/CMakeFiles/api.dir/api.cpp.o.d
-  FLAGS = -Wall -Werror -pthread -g -std=gnu++14
+  FLAGS = -Wall -Werror -pthread -g -std=gnu++11
   OBJECT_DIR = libs/CMakeFiles/api.dir
   OBJECT_FILE_DIR = libs/CMakeFiles/api.dir
 

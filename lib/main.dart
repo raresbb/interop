@@ -1,91 +1,58 @@
+
+import 'dart:ffi';
 import 'dart:io';
-import 'dart:typed_data';
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'dart:convert';
 
-int i = 1;
-int counter = 0;
+class FFIBridge {
+  static bool initialize() {
+    nativeApiLib = Platform.isMacOS || Platform.isIOS
+        ? DynamicLibrary.process() // macos and ios
+        : (DynamicLibrary.open(Platform.isWindows // windows
+            ? 'api.dll'
+            : 'libapi.so')); // android and linux
 
-class AnglesModel with ChangeNotifier {
-  double angleFR = 0.0;
-  double angleFL = 0.0;
-  double angleRR = 0.0;
-  double angleRL = 0.0;
+    final _getAngleFR = nativeApiLib.lookup<
+        NativeFunction<Double Function()>>('getAngleFR');
+    getAngleFR = _getAngleFR.asFunction<double Function()>();
 
-  void updateAngles(List<double> angles) {
-    angleFR = angles[0];
-    angleFL = angles[1];
-    angleRR = angles[2];
-    angleRL = angles[3];
-    notifyListeners();
-  }
-}
+    final _getAngleFL = nativeApiLib.lookup<
+        NativeFunction<Double Function()>>('getAngleFL');
+    getAngleFL = _getAngleFL.asFunction<double Function()>();
 
-class AnglesReader {
-  final _pipe = File('/tmp/AnglesPipe');
-  final BuildContext _context;
-  StreamSubscription? _subscription;
+    final _getAngleRR = nativeApiLib.lookup<
+        NativeFunction<Double Function()>>('getAngleRR');
+    getAngleRR = _getAngleRR.asFunction<double Function()>();
 
-  AnglesReader(this._context);
+    final _getAngleRL = nativeApiLib.lookup<
+        NativeFunction<Double Function()>>('getAngleRL');
+    getAngleRL = _getAngleRL.asFunction<double Function()>();
 
-  void start() {
-    int i = 1;
-    try {
-      _subscription = _pipe.openRead().asBroadcastStream().listen((data) {
-        File('/tmp/AnglesPipe').readAsBytes().then((data) {
-          final byteData = Uint8List.fromList(data);
-          final doubleList = byteData.buffer.asFloat64List().sublist(0, 4);
-          print(doubleList);
-        });
-        print('the function started was called ${i} times');
-        try {
-          final byteData = Uint8List.fromList(data).buffer;
-          final doubleList = byteData.asFloat64List();
-          print(doubleList.length);
-          updateAngles([doubleList[0], doubleList[1], doubleList[2], doubleList[3]]);
-          
-        } catch (e) {
-          print(e);
-        }
-        i = i + 1;
-      });
-    } catch (e) {
-      print("Pipe not available, please restart the FLUTTER GUI");
-    }
+    return true;
   }
 
-  void stop() {
-    _subscription?.cancel();
-  }
+  static late DynamicLibrary nativeApiLib;
+  static late Function getAngleFR;
+  static late Function getAngleFL;
+  static late Function getAngleRR;
+  static late Function getAngleRL;
 
-  void updateAngles(List<double> angles) {
-    final anglesModel = Provider.of<AnglesModel>(_context, listen: false);
-    anglesModel.updateAngles(angles);
-    // update counter 
-    counter = counter + 1;
-    print ('counter: ${counter}');
-  }
 }
 
 void main() {
-  runApp(
-    ChangeNotifierProvider.value(
-      value: AnglesModel(),
-      child: const MyApp(),
-    ),
-  );
+  FFIBridge.initialize();
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -94,29 +61,16 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  final String title;
-
   const MyHomePage({Key? key, required this.title}) : super(key: key);
+
+  final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+
 class _MyHomePageState extends State<MyHomePage> {
-  late AnglesReader _anglesReader;
-  @override
-  void initState() {
-    super.initState();
-    _anglesReader = AnglesReader(context);
-    _anglesReader.start();
-  }
-
-  @override
-  void dispose() {
-     _anglesReader.stop();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,15 +78,27 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Consumer<AnglesModel>(
-          builder: (context, anglesModel, child) {
+        child: StatefulBuilder(
+          builder: (context, setState) {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text('AngleFR: ${anglesModel.angleFR}', style: const TextStyle(fontSize: 40)),
-                Text('AngleFL: ${anglesModel.angleFL}', style: const TextStyle(fontSize: 40)),
-                Text('AngleRR: ${anglesModel.angleRR}', style: const TextStyle(fontSize: 40)),
-                Text('AngleRL: ${anglesModel.angleRL}', style: const TextStyle(fontSize: 40)),
+                Text(
+                  'AngleFR: ${FFIBridge.getAngleFR()}',
+                  style: const TextStyle(fontSize: 40),
+                ),
+                Text(
+                  'AngleFL: ${FFIBridge.getAngleFL()}',
+                  style: const TextStyle(fontSize: 40),
+                ),
+                Text(
+                  'AngleRR: ${FFIBridge.getAngleRR()}',
+                  style: const TextStyle(fontSize: 40),
+                ),
+                Text(
+                  'AngleRL: ${FFIBridge.getAngleRL()}',
+                  style: const TextStyle(fontSize: 40),
+                ),
               ],
             );
           },

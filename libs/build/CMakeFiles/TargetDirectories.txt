@@ -1,3 +1,0 @@
-/home/rares/dev/interop/libs/build/CMakeFiles/api.dir
-/home/rares/dev/interop/libs/build/CMakeFiles/edit_cache.dir
-/home/rares/dev/interop/libs/build/CMakeFiles/rebuild_cache.dir

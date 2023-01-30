@@ -1,70 +1,70 @@
+#ifdef WIN32
+#define EXPORT __declspec(dllexport)
+#else
+#define EXPORT extern "C" __attribute__((visibility("default"))) __attribute__((used))
+#endif
+
 #include <iostream>
 #include <thread>
 #include <random>
 #include <atomic>
-#include <string>
-#include <fcntl.h>
-#include <unistd.h>
-#include <functional>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <csignal>
+#include <functional>
+#include <csignal>
+
 
 std::mt19937 generator(std::random_device{}());
 std::atomic<bool> stop_thread{false};
 
-struct Angles {
-    double angle_FR;
-    double angle_FL;
-    double angle_RR;
-    double angle_RL;
-};
+double angle_FR = 0.0;
+double angle_FL = 0.0;
+double angle_RR = 0.0;
+double angle_RL = 0.0;
 
-void updateAngles(int pipe) {
+EXPORT double getAngleFR() {
+    return angle_FR;
+}
+
+EXPORT double getAngleFL() {
+    return angle_FL;
+}
+
+EXPORT double getAngleRR() {
+    return angle_RR;
+}
+
+EXPORT double getAngleRL() {
+    return angle_RL;
+}
+
+void updateAngles() {
     std::uniform_real_distribution<double> distribution(-90.0, 90.0);
     auto random = std::bind(distribution, generator);
     while (!stop_thread) {
-        Angles angles;
-        angles.angle_FR = random();
-        angles.angle_FL = random();
-        angles.angle_RR = random();
-        angles.angle_RL = random();
-        write(pipe, &angles, sizeof(angles));
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        std::cout << "angle_FR: " << angles.angle_FR << std::endl;
-        std::cout << "angle_FL: " << angles.angle_FL << std::endl;
-        std::cout << "angle_RR: " << angles.angle_RR << std::endl;
-        std::cout << "angle_RL: " << angles.angle_RL << std::endl;
-        std::cout << "---------------" << std::endl;
+        angle_FR = random();
+        angle_FL = random();
+        angle_RR = random();
+        angle_RL = random();
         
+        std::cout << "angle_FR: " << angle_FR << std::endl;
+        std::cout << "angle_FL: " << angle_FL << std::endl;
+        std::cout << "angle_RR: " << angle_RR << std::endl;
+        std::cout << "angle_RL: " << angle_RL << std::endl;
+        std::cout << "---------------" << std::endl;
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }
 
+
 int main() {
-    if (access("/tmp/AnglesPipe", F_OK) == -1) {
-        if (mkfifo("/tmp/AnglesPipe", 0666) == -1) {
-            std::cout << "Error creating named pipe" << std::endl;
-            return 1;
-        }
-    }
+    std::thread t(updateAngles);
 
-    int pipe = open("/tmp/AnglesPipe", O_RDWR);
-    if (pipe == -1) {
-        std::cout << "Error opening named pipe" << std::endl;
-        return 1;
-    }
-
-    std::thread t(updateAngles, pipe);
-
-
-    // when ctrl+c is pressed, stop the thread
     std::signal(SIGINT, [](int) {
         stop_thread = true;
     });
 
     t.join();
-    close(pipe);
-    unlink("/tmp/AnglesPipe");
 
     return 0;
 }
