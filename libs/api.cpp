@@ -30,13 +30,13 @@ void updateAngles(int pipe) {
         angles.angle_RR = random();
         angles.angle_RL = random();
         write(pipe, &angles, sizeof(angles));
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        // print angles on different lines
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
         std::cout << "angle_FR: " << angles.angle_FR << std::endl;
         std::cout << "angle_FL: " << angles.angle_FL << std::endl;
         std::cout << "angle_RR: " << angles.angle_RR << std::endl;
         std::cout << "angle_RL: " << angles.angle_RL << std::endl;
         std::cout << "---------------" << std::endl;
+        
     }
 }
 
@@ -56,6 +56,7 @@ int main() {
 
     std::thread t(updateAngles, pipe);
 
+
     // when ctrl+c is pressed, stop the thread
     std::signal(SIGINT, [](int) {
         stop_thread = true;
@@ -63,5 +64,7 @@ int main() {
 
     t.join();
     close(pipe);
+    unlink("/tmp/AnglesPipe");
+
     return 0;
 }

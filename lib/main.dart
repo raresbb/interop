@@ -3,8 +3,10 @@ import 'dart:typed_data';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:convert';
 
-int i = 0;
+int i = 1;
+int counter = 0;
 
 class AnglesModel with ChangeNotifier {
   double angleFR = 0.0;
@@ -29,19 +31,29 @@ class AnglesReader {
   AnglesReader(this._context);
 
   void start() {
-    _subscription = _pipe.openRead().listen((data) {
-      print('the function started was called ${i} times');
-      try {
-        final byteData = Uint8List.fromList(data).buffer;
-        final doubleList = byteData.asFloat64List();
-        print(doubleList.length);
-        updateAngles([doubleList[0], doubleList[1], doubleList[2], doubleList[3]]);
-      } catch (e) {
-        print(e);
-        
-      }
-      i = i + 1;
-    });
+    int i = 1;
+    try {
+      _subscription = _pipe.openRead().asBroadcastStream().listen((data) {
+        File('/tmp/AnglesPipe').readAsBytes().then((data) {
+          final byteData = Uint8List.fromList(data);
+          final doubleList = byteData.buffer.asFloat64List().sublist(0, 4);
+          print(doubleList);
+        });
+        print('the function started was called ${i} times');
+        try {
+          final byteData = Uint8List.fromList(data).buffer;
+          final doubleList = byteData.asFloat64List();
+          print(doubleList.length);
+          updateAngles([doubleList[0], doubleList[1], doubleList[2], doubleList[3]]);
+          
+        } catch (e) {
+          print(e);
+        }
+        i = i + 1;
+      });
+    } catch (e) {
+      print("Pipe not available, please restart the FLUTTER GUI");
+    }
   }
 
   void stop() {
@@ -51,13 +63,16 @@ class AnglesReader {
   void updateAngles(List<double> angles) {
     final anglesModel = Provider.of<AnglesModel>(_context, listen: false);
     anglesModel.updateAngles(angles);
+    // update counter 
+    counter = counter + 1;
+    print ('counter: ${counter}');
   }
 }
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => AnglesModel(),
+    ChangeNotifierProvider.value(
+      value: AnglesModel(),
       child: const MyApp(),
     ),
   );
