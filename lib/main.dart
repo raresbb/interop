@@ -1,81 +1,18 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'dart:convert';
 
-int i = 1;
-int counter = 0;
+class AngleData {
+  double angleFR;
+  double angleFL;
+  double angleRR;
+  double angleRL;
 
-class AnglesModel with ChangeNotifier {
-  double angleFR = 0.0;
-  double angleFL = 0.0;
-  double angleRR = 0.0;
-  double angleRL = 0.0;
-
-  void updateAngles(List<double> angles) {
-    angleFR = angles[0];
-    angleFL = angles[1];
-    angleRR = angles[2];
-    angleRL = angles[3];
-    notifyListeners();
-  }
-}
-
-class AnglesReader {
-  final _pipe = File('/tmp/AnglesPipe');
-  final BuildContext _context;
-  StreamSubscription? _subscription;
-
-  AnglesReader(this._context);
-
-  void start() {
-    int i = 1;
-    try {
-      _subscription = _pipe.openRead().asBroadcastStream().listen((data) {
-        File('/tmp/AnglesPipe').readAsBytes().then((data) {
-          final byteData = Uint8List.fromList(data);
-          final doubleList = byteData.buffer.asFloat64List().sublist(0, 4);
-          print(doubleList);
-        });
-        print('the function started was called ${i} times');
-        try {
-          final byteData = Uint8List.fromList(data).buffer;
-          final doubleList = byteData.asFloat64List();
-          print(doubleList.length);
-          updateAngles([doubleList[0], doubleList[1], doubleList[2], doubleList[3]]);
-          
-        } catch (e) {
-          print(e);
-        }
-        i = i + 1;
-      });
-    } catch (e) {
-      print("Pipe not available, please restart the FLUTTER GUI");
-    }
-  }
-
-  void stop() {
-    _subscription?.cancel();
-  }
-
-  void updateAngles(List<double> angles) {
-    final anglesModel = Provider.of<AnglesModel>(_context, listen: false);
-    anglesModel.updateAngles(angles);
-    // update counter 
-    counter = counter + 1;
-    print ('counter: ${counter}');
-  }
+  AngleData({required this.angleFR, required this.angleFL, required this.angleRR, required this.angleRL});
 }
 
 void main() {
-  runApp(
-    ChangeNotifierProvider.value(
-      value: AnglesModel(),
-      child: const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -84,7 +21,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -103,41 +39,105 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  late AnglesReader _anglesReader;
-  @override
-  void initState() {
-    super.initState();
-    _anglesReader = AnglesReader(context);
-    _anglesReader.start();
+  late AngleData _angles;
+
+  // initialize _angles with NaN
+  _MyHomePageState() {
+    _angles = AngleData(
+      angleFR: double.nan,
+      angleFL: double.nan,
+      angleRR: double.nan,
+      angleRL: double.nan,
+    );
   }
 
   @override
-  void dispose() {
-     _anglesReader.stop();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _readAngleData();
+  }
+
+  // read angle data from pipe
+  Future<void> _readAngleData() async {
+    var file = File('/tmp/AnglesPipe');
+    var randomAccessFile = await file.open(mode: FileMode.read);
+    var data = Uint8List(32);
+
+    while (true) {
+      await randomAccessFile.readInto(data);
+      var buffer = data.buffer;
+      setState(() {
+        _angles = AngleData(
+          angleFR: buffer.asFloat64List()[0],
+          angleFL: buffer.asFloat64List()[1],
+          angleRR: buffer.asFloat64List()[2],
+          angleRL: buffer.asFloat64List()[3],
+        );
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
+  return Scaffold(
+    appBar: AppBar(
+      title: Text(widget.title),
+    ),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          if (_angles != null)
+            Text('AngleFR: ${_angles.angleFR}', style: const TextStyle(fontSize: 40)),
+          if (_angles != null)
+            Text('AngleFL: ${_angles.angleFL}', style: const TextStyle(fontSize: 40)),
+          if (_angles != null)
+            Text('AngleRR: ${_angles.angleRR}', style: const TextStyle(fontSize: 40)),
+          if (_angles != null)
+            Text('AngleRL: ${_angles.angleRL}', style: const TextStyle(fontSize: 40)),
+        ],
       ),
-      body: Center(
-        child: Consumer<AnglesModel>(
-          builder: (context, anglesModel, child) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('AngleFR: ${anglesModel.angleFR}', style: const TextStyle(fontSize: 40)),
-                Text('AngleFL: ${anglesModel.angleFL}', style: const TextStyle(fontSize: 40)),
-                Text('AngleRR: ${anglesModel.angleRR}', style: const TextStyle(fontSize: 40)),
-                Text('AngleRL: ${anglesModel.angleRL}', style: const TextStyle(fontSize: 40)),
-              ],
-            );
-          },
-        ),
-      ),
-    );
+    ),
+  );
   }
 }
+
+
+/*
+import 'dart:io';
+import 'dart:typed_data';
+
+class Angles {
+  double angleFR;
+  double angleFL;
+  double angleRR;
+  double angleRL;
+
+  Angles({required this.angleFR, required this.angleFL, required this.angleRR, required this.angleRL});
+}
+
+Future<void> readAngles() async {
+  var file = File('/tmp/AnglesPipe');
+  var randomAccessFile = await file.open(mode: FileMode.read);
+  var data = Uint8List(32);
+
+  while (true) {
+    await randomAccessFile.readInto(data);
+    var buffer = data.buffer;
+    var angles = Angles(
+        angleFR: buffer.asFloat64List()[0],
+        angleFL: buffer.asFloat64List()[1],
+        angleRR: buffer.asFloat64List()[2],
+        angleRL: buffer.asFloat64List()[3]);
+    print('angle_FR: ${angles.angleFR}');
+    print('angle_FL: ${angles.angleFL}');
+    print('angle_RR: ${angles.angleRR}');
+    print('angle_RL: ${angles.angleRL}');
+    print('---------------');
+  }
+}
+
+void main() {
+  readAngles();
+}
+*/
