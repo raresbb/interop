@@ -1,25 +1,33 @@
-cmake_minimum_required(VERSION 3.10)
-project(api)
-
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Add compiler flags for warnings and errors
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Werror")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+cmake_minimum_required(VERSION 3.19)
+project(fzd_gui)
 
 # Set the output directory for the binary
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/src)
+message("ASOA-Project root: ${PROJECT_SOURCE_DIR}")
+message("Runtime file will be created in: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
-# Add the thread library
-find_package(Threads REQUIRED)
+set(CMAKE_CXX_STANDARD 14)
 
-# Add the source file
-set(SOURCES api.cpp)
+# Include all directories from project root for the compiler
+include_directories(${PROJECT_SOURCE_DIR})
+
+# Include libraries
+find_package(asoa_core 0.3 REQUIRED)
+
+
+# Service executables
+file(GLOB SERVICE_SRC
+        "${PROJECT_SOURCE_DIR}/include/asoa_service/*.cpp"
+        "${PROJECT_SOURCE_DIR}/include/asoa_service/*.hpp"
+        "${PROJECT_SOURCE_DIR}/include/asoa_service/interface/guarantees/*.hpp"
+        "${PROJECT_SOURCE_DIR}/include/asoa_service/interface/requirements/*.hpp"
+        )
 
 # Create the executable
-add_executable(api ${SOURCES})
+add_executable(${PROJECT_NAME} src/main.cpp ${SERVICE_SRC})
+target_link_libraries(${PROJECT_NAME} asoa_core)
 
-# Link the executable with the thread library
-target_link_libraries(api Threads::Threads)
+target_compile_definitions(${PROJECT_NAME}
+        PRIVATE -Dfzd_gui_ROOT_DIR="${PROJECT_SOURCE_DIR}")
+
 

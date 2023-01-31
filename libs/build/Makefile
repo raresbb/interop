@@ -117,41 +117,89 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named api
+# Target rules for targets named fzd_gui
 
 # Build rule for target.
-api: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 api
-.PHONY : api
+fzd_gui: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 fzd_gui
+.PHONY : fzd_gui
 
 # fast build rule for target.
-api/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/api.dir/build.make CMakeFiles/api.dir/build
-.PHONY : api/fast
+fzd_gui/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fzd_gui.dir/build.make CMakeFiles/fzd_gui.dir/build
+.PHONY : fzd_gui/fast
 
-api.o: api.cpp.o
-.PHONY : api.o
+include/asoa_service/ext_interface.o: include/asoa_service/ext_interface.cpp.o
+.PHONY : include/asoa_service/ext_interface.o
 
 # target to build an object file
-api.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/api.dir/build.make CMakeFiles/api.dir/api.cpp.o
-.PHONY : api.cpp.o
+include/asoa_service/ext_interface.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fzd_gui.dir/build.make CMakeFiles/fzd_gui.dir/include/asoa_service/ext_interface.cpp.o
+.PHONY : include/asoa_service/ext_interface.cpp.o
 
-api.i: api.cpp.i
-.PHONY : api.i
+include/asoa_service/ext_interface.i: include/asoa_service/ext_interface.cpp.i
+.PHONY : include/asoa_service/ext_interface.i
 
 # target to preprocess a source file
-api.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/api.dir/build.make CMakeFiles/api.dir/api.cpp.i
-.PHONY : api.cpp.i
+include/asoa_service/ext_interface.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fzd_gui.dir/build.make CMakeFiles/fzd_gui.dir/include/asoa_service/ext_interface.cpp.i
+.PHONY : include/asoa_service/ext_interface.cpp.i
 
-api.s: api.cpp.s
-.PHONY : api.s
+include/asoa_service/ext_interface.s: include/asoa_service/ext_interface.cpp.s
+.PHONY : include/asoa_service/ext_interface.s
 
 # target to generate assembly for a file
-api.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/api.dir/build.make CMakeFiles/api.dir/api.cpp.s
-.PHONY : api.cpp.s
+include/asoa_service/ext_interface.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fzd_gui.dir/build.make CMakeFiles/fzd_gui.dir/include/asoa_service/ext_interface.cpp.s
+.PHONY : include/asoa_service/ext_interface.cpp.s
+
+include/asoa_service/global.o: include/asoa_service/global.cpp.o
+.PHONY : include/asoa_service/global.o
+
+# target to build an object file
+include/asoa_service/global.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fzd_gui.dir/build.make CMakeFiles/fzd_gui.dir/include/asoa_service/global.cpp.o
+.PHONY : include/asoa_service/global.cpp.o
+
+include/asoa_service/global.i: include/asoa_service/global.cpp.i
+.PHONY : include/asoa_service/global.i
+
+# target to preprocess a source file
+include/asoa_service/global.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fzd_gui.dir/build.make CMakeFiles/fzd_gui.dir/include/asoa_service/global.cpp.i
+.PHONY : include/asoa_service/global.cpp.i
+
+include/asoa_service/global.s: include/asoa_service/global.cpp.s
+.PHONY : include/asoa_service/global.s
+
+# target to generate assembly for a file
+include/asoa_service/global.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fzd_gui.dir/build.make CMakeFiles/fzd_gui.dir/include/asoa_service/global.cpp.s
+.PHONY : include/asoa_service/global.cpp.s
+
+src/main.o: src/main.cpp.o
+.PHONY : src/main.o
+
+# target to build an object file
+src/main.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fzd_gui.dir/build.make CMakeFiles/fzd_gui.dir/src/main.cpp.o
+.PHONY : src/main.cpp.o
+
+src/main.i: src/main.cpp.i
+.PHONY : src/main.i
+
+# target to preprocess a source file
+src/main.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fzd_gui.dir/build.make CMakeFiles/fzd_gui.dir/src/main.cpp.i
+.PHONY : src/main.cpp.i
+
+src/main.s: src/main.cpp.s
+.PHONY : src/main.s
+
+# target to generate assembly for a file
+src/main.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/fzd_gui.dir/build.make CMakeFiles/fzd_gui.dir/src/main.cpp.s
+.PHONY : src/main.cpp.s
 
 # Help Target
 help:
@@ -161,10 +209,16 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... api"
-	@echo "... api.o"
-	@echo "... api.i"
-	@echo "... api.s"
+	@echo "... fzd_gui"
+	@echo "... include/asoa_service/ext_interface.o"
+	@echo "... include/asoa_service/ext_interface.i"
+	@echo "... include/asoa_service/ext_interface.s"
+	@echo "... include/asoa_service/global.o"
+	@echo "... include/asoa_service/global.i"
+	@echo "... include/asoa_service/global.s"
+	@echo "... src/main.o"
+	@echo "... src/main.i"
+	@echo "... src/main.s"
 .PHONY : help
 
 

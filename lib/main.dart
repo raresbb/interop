@@ -1,7 +1,8 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:testffi/vehicle.dart';
+import 'package:angle_visualizer/vehicle.dart';
 
 class AngleData {
   double angleFR;
@@ -54,23 +55,29 @@ class _RootPageState extends State<RootPage> {
 
   // read angle data from pipe
   Future<void> _readAngleData() async {
-    var file = File('/tmp/AnglesPipe');
-    var randomAccessFile = await file.open(mode: FileMode.read);
-    var data = Uint8List(32);
+  Timer.periodic(const Duration(seconds: 1), (_) async {
+    try {
+      var file = File('/tmp/AnglesPipe');
+      var randomAccessFile = await file.open(mode: FileMode.read);
+      var data = Uint8List(32);
 
-    while (true) {
-      await randomAccessFile.readInto(data);
-      var buffer = data.buffer;
-      setState(() {
-        _angles = AngleData(
-          angleFR: buffer.asFloat64List()[0],
-          angleFL: buffer.asFloat64List()[1],
-          angleRR: buffer.asFloat64List()[2],
-          angleRL: buffer.asFloat64List()[3],
-        );
-      });
+      while (true) {
+        await randomAccessFile.readInto(data);
+        var buffer = data.buffer;
+        setState(() {
+          _angles = AngleData(
+            angleFR: buffer.asFloat64List()[0],
+            angleFL: buffer.asFloat64List()[1],
+            angleRR: buffer.asFloat64List()[2],
+            angleRL: buffer.asFloat64List()[3],
+          );
+        });
+      }
+    } catch (e) {
+      print(e);
     }
-  }
+  });
+}
 
   @override
   Widget build(BuildContext context) {

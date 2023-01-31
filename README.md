@@ -1,4 +1,4 @@
-# testffi
+# angle_visualizer
 
 A new Flutter project.
 

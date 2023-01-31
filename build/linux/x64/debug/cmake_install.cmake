@@ -49,29 +49,29 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Runtime" OR NOT CMAKE_INSTALL_COMPONENT)
-  if(EXISTS "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/testffi" AND
-     NOT IS_SYMLINK "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/testffi")
+  if(EXISTS "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/angle_visualizer" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/angle_visualizer")
     file(RPATH_CHECK
-         FILE "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/testffi"
+         FILE "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/angle_visualizer"
          RPATH "$ORIGIN/lib")
   endif()
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/home/rares/dev/interop/build/linux/x64/debug/bundle/testffi")
+   "/home/rares/dev/interop/build/linux/x64/debug/bundle/angle_visualizer")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/home/rares/dev/interop/build/linux/x64/debug/bundle" TYPE EXECUTABLE FILES "/home/rares/dev/interop/build/linux/x64/debug/intermediates_do_not_run/testffi")
-  if(EXISTS "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/testffi" AND
-     NOT IS_SYMLINK "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/testffi")
+  file(INSTALL DESTINATION "/home/rares/dev/interop/build/linux/x64/debug/bundle" TYPE EXECUTABLE FILES "/home/rares/dev/interop/build/linux/x64/debug/intermediates_do_not_run/angle_visualizer")
+  if(EXISTS "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/angle_visualizer" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/angle_visualizer")
     file(RPATH_CHANGE
-         FILE "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/testffi"
+         FILE "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/angle_visualizer"
          OLD_RPATH "/home/rares/dev/interop/linux/flutter/ephemeral:"
          NEW_RPATH "$ORIGIN/lib")
     if(CMAKE_INSTALL_DO_STRIP)
-      execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/testffi")
+      execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}/home/rares/dev/interop/build/linux/x64/debug/bundle/angle_visualizer")
     endif()
   endif()
 endif()

@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.testffi">
+    package="com.example.angle_visualizer">
    <application
-        android:label="testffi"
+        android:label="angle_visualizer"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

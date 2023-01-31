@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:testffi/wheel.dart';
+import 'package:angle_visualizer/wheel.dart';
 
 class VehicleFrame extends StatelessWidget {
   final double angleFL;

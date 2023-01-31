@@ -1,4 +1,4 @@
-/home/rares/dev/interop/build/linux/x64/debug/bundle/testffi
+/home/rares/dev/interop/build/linux/x64/debug/bundle/angle_visualizer
 /home/rares/dev/interop/build/linux/x64/debug/bundle/data/icudtl.dat
 /home/rares/dev/interop/build/linux/x64/debug/bundle/lib/libflutter_linux_gtk.so
 /home/rares/dev/interop/build/linux/x64/debug/bundle/lib/libapi.so

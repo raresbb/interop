@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(testffi LANGUAGES CXX)
+project(angle_visualizer LANGUAGES CXX)
 
-set(BINARY_NAME "testffi")
+set(BINARY_NAME "angle_visualizer")
 
 cmake_policy(SET CMP0063 NEW)
 

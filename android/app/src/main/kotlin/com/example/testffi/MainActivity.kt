@@ -1,4 +1,4 @@
-package com.example.testffi
+package com.example.angle_visualizer
 
 import io.flutter.embedding.android.FlutterActivity
 
