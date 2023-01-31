@@ -7,9 +7,9 @@ class VehicleFrame extends StatelessWidget {
   final double angleRL;
   final double angleRR;
 
-  static const double vehicleXMargin = 100;
-  static const double vehicleYMargin = 100;
-  static const double vehicleWidth = 200;
+  static const double vehicleXMargin = 40;
+  static const double vehicleYMargin = 50;
+  static const double vehicleWidth = 250;
 
   const VehicleFrame({
     Key? key,
@@ -18,7 +18,6 @@ class VehicleFrame extends StatelessWidget {
     required this.angleRL,
     required this.angleRR,
   }) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,7 @@ class VehicleFrame extends StatelessWidget {
               ),
               Positioned(
                 top: vehicleYMargin,
-                right: vehicleXMargin,
+                right: 0,
                 child: Wheel(
                   key: const Key('fr'),
                   angle: angleFR,
@@ -62,7 +61,7 @@ class VehicleFrame extends StatelessWidget {
               ),
               Positioned(
                 bottom: vehicleYMargin,
-                right: vehicleXMargin,
+                right: 0,
                 child: Wheel(
                   key: const Key('rr'),
                   angle: angleRR,
@@ -73,7 +72,7 @@ class VehicleFrame extends StatelessWidget {
               Positioned(
                 top: vehicleYMargin + 150,
                 left: vehicleXMargin + 40,
-                right: vehicleXMargin + 80,
+                right: vehicleXMargin + 40,
                 child: Container(
                   height: 8,
                   decoration: BoxDecoration(
@@ -86,7 +85,7 @@ class VehicleFrame extends StatelessWidget {
               Positioned(
                 bottom: vehicleYMargin + 150,
                 left: vehicleXMargin + 40,
-                right: vehicleXMargin + 80,
+                right: vehicleXMargin + 40,
                 child: Container(
                   height: 8,
                   decoration: BoxDecoration(
@@ -99,7 +98,7 @@ class VehicleFrame extends StatelessWidget {
               Positioned(
                 top: vehicleYMargin + 150,
                 bottom: vehicleYMargin + 150,
-                left: middlePoint,
+                left: middlePoint - 4,
                 child: Container(
                   width: 8,
                   color: Colors.black,

@@ -86,7 +86,7 @@ class _RootPageState extends State<RootPage> {
       body: Center(
         // child is the vehicle frame
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 500, minHeight: 500),
+          constraints: const BoxConstraints(minWidth: 200, minHeight: 400),
           child: VehicleFrame(
             angleFL: _angles.angleFL,
             angleFR: _angles.angleFR,
