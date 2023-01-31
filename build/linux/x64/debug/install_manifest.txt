@@ -9,4 +9,5 @@
 /home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/version.json
 /home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/NOTICES.Z
 /home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag
+/home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/images/tire.png
 /home/rares/dev/interop/build/linux/x64/debug/bundle/data/flutter_assets/kernel_blob.bin

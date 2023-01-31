@@ -21,7 +21,7 @@ struct Angles {
 };
 
 void updateAngles(int pipe) {
-    std::uniform_real_distribution<double> distribution(-90.0, 90.0);
+    std::uniform_real_distribution<double> distribution(-3.14, 3.14);
     auto random = std::bind(distribution, generator);
     while (!stop_thread) {
         Angles angles;
@@ -68,19 +68,3 @@ int main() {
 
     return 0;
 }
-
-
-/*
-  void _readAngleData() async {
-    final File pipe = File("/tmp/AnglesPipe");
-    final RandomAccessFile randomAccessFile = await pipe.open(mode: FileMode.read);
-    final ByteData data = (await randomAccessFile.read(16)) as ByteData;
-    _angles = AngleData(
-      angleFR: data.getFloat64(0),
-      angleFL: data.getFloat64(8),
-      angleRR: data.getFloat64(16),
-      angleRL: data.getFloat64(24),
-    );
-    setState(() {});
-  }
-  */
