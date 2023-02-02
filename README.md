@@ -1,50 +1,127 @@
-# angle_visualizer
+# FZD GUI - Steering Angles Visualizer
 
-A new Flutter project.
+This repository contains a GUI application, which provides an easy way to visualize the current steering angles of Unicar vehicles.
 
-## Getting Started
+# Usage
 
-This project is a starting point for a Flutter application.
+Define your **network interface name** responsible for receiving PTP signals and synchronizing the system time with the vehicle.
+This is done by changing a variable called `ETHERNET_INTERFACE_NAME` at the very top of [run.sh](run.sh). Afterwards, run this bash script by typing `./run.sh` from project root.
 
-A few resources to get you started if this is your first Flutter project:
+# Dependencies and Requirements
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## System Requirements
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Ubuntu
 
-## Commands for dart
+- Version used during development: [18.04 LTS (Bionic Beaver)](https://old-releases.ubuntu.com/releases/18.04.5/)
+<!---
+### Xbox Gamepad
 
-dart pub get      -> downloading dependencies
-flutter run       -> runs the app from terminal
-flutter run --hot -> enables hot reloading. This means that after the initial build, you can make code changes and see them reflected in the running app without having to rebuild the entire app.
+The gamepad used during development and testing was the Xbox Elite Series 2 Controller.
 
-## Other plan
+Ubuntu 18.04 comes with a kernel module as gamepad driver preinstalled. This driver should be sufficient.
+However, if you run into compatibility issues try updating to the most recent version from [here](https://github.com/paroj/xpad)
+or try installing a different driver (for example [this one](https://github.com/medusalix/xone)).
 
-class Angles
-private:
-  FR
-  FL
-  RR
-  RL
-public:
-  set Angles() {}
+If you run the module [gamepad.py](include/core/gamepad.py) (Our gamepad API) as `__main__` you can have a look at your current axis and button mappings in the terminal.
+This provides a fast debugging tool.
+-->
+### Packages
+
+Start a terminal and run `sudo apt update`. Now proceed with the following commands:
+
+- GCC Compiler `sudo apt install build-essential`
+- Git `sudo apt install git`
+- [CMake](https://cmake.org/install/) `sudo snap install cmake --classic`
   
-  EXPORT
-  get Angles() {}
+  This installs a more recent version than `sudo apt install cmake` would do. The required minimum version for this project is 3.19.
 
-## Inter Process Communication (IPC)
 
-Pipe
+- ASOA and dependencies
+    1. Install `asoa_core.deb` and `asoa_orchestrator.deb`
+    2. OpenSSL (required by ASOA)
+       `sudo apt install libssl-dev`
+    3. Boost Python (required by ASOA Orchestrator)
+       `sudo apt install libboost-python-dev`
+    4. [Fast DDS](https://github.com/eProsima/Fast-DDS) (formerly Fast RTPS) (required by ASOA Core)
+        1. Asio and tinyxml2 libraries `sudo apt install libasio-dev libtinyxml2-dev`
+        2. Create a temporary directory and start terminal inside. Run the following commands in this terminal.
+        3. [Fast CDR](https://github.com/eProsima/Fast-CDR)
+           ```shell
+           git clone https://github.com/eProsima/Fast-CDR.git
+           mkdir Fast-CDR/build && cd Fast-CDR/build
+           cmake ..
+           sudo cmake --build . --target install
+           cd ../..  # Back to temporary directory root
+           ```
+        4. [Foonathan memory](https://github.com/foonathan/memory)
+           ```shell
+           git clone https://github.com/eProsima/foonathan_memory_vendor.git
+           mkdir foonathan_memory_vendor/build && cd foonathan_memory_vendor/build
+           cmake ..
+           sudo cmake --build . --target install
+           cd ../..  # Back to temporary directory root
+           ```
+        5. Once all dependencies are installed, compile and install Fast DDS
+           ```shell
+           git clone https://github.com/eProsima/Fast-DDS.git -b 2.3.0  # Currently required version of ASOA Core
+           mkdir Fast-DDS/build && cd Fast-DDS/build
+           cmake ..
+           sudo cmake --build . --target install
+           cd ../..  # Back to temporary directory root
+           ```
+           If you're not able to successfully install Fast DDS manually from source, another option is to download the latest
+           release [from eProsimas website](https://eprosima.com/index.php/downloads-all) and do the following:
+            - Extract the downloaded file.
+            - Open terminal inside extracted directory.
+            - Run install script `sudo ./install.sh`
 
-Socket
+           Note that you have to register yourself on the website before being able to download, though.
 
-JSON: Serializing data as JSON and passing it between the two languages can be a simple and effective way to share data. This is a popular option when the data being passed is relatively small and the data structure is not too complex.
+# Cloning and Installing
 
-Shared Memory: This is a low-level method that allows you to create a shared memory segment that can be accessed by both Dart and C++. This method can be faster than JSON because it does not involve serialization and deserialization.
+## Cloning
+- Besides the FZD GUI service, there is one other service required. Therefore, it is necessary to create a parent folder <name_parent_folder> and **clone** both services inside it. The repositories for each service can be found under the following links:
+   1. [cm-asoa-service](https://git.rwth-aachen.de/fzd/unicar-agil/dienste-repositories/cm-asoa-service)
+   1. [fzd_gui](https://git.rwth-aachen.de/fzd/unicar-agil/dienste-repositories/manual_control)
 
-Isolates: Dart supports the concept of isolates, which are separate threads of execution that can run in parallel. You can use isolates to run your C++ code in parallel with your Dart code, which can be a good option if your C++ code is computationally intensive.
+- E.g. cloning:
+   ```
+      git clone --recursive https://git.rwth-aachen.de/fzd/unicar-agil/dienste-repositories/manual_control.git
+   ```
+- Before cloning [cm-asoa-service](https://git.rwth-aachen.de/fzd/unicar-agil/dienste-repositories/cm-asoa-service) make sure to check its README as it might contain additional submodules or dependencies.
 
-FFI: Foreign Function Interface (FFI) allows you to call C-style functions directly from Dart. It's good option if you have existing C/C++ libraries that you want to use in your Dart code.
+- In the end, the folder structure should look as follows:
+   ```
+   <name_parent_folder>
+   ├── cm-asoa-service
+   └── fzd_gui
+   ```
+
+- **<font color="red"> The parent folder structure and names of the subfolders are important for the testing process.</font>**
+
+## Installation
+
+- The **FZD GUI** repository contains an installation setup script. Therefore, open a terminal **inside the project root** and run `./install.sh`. This script will install all required dependencies and build the project.
+
+- Install [cm-asoa-service](https://git.rwth-aachen.de/fzd/unicar-agil/dienste-repositories/cm-asoa-service) as described in its respective README as it might have additional dependencies to be installed.
+
+# Testing
+
+There is a script for automating the test setup.
+
+1. Inside the project root execute: directory: `./test.sh`
+2. There should be a total of 5 terminal tabs open by now and several programs should have started.
+   - The main tab, where you executed the testing script.
+   - CarMaker tab, which hosts the CarMaker application.
+   - FZD GUI tab, which hosts the GUI displaying the current steering angles
+   - ASOA Orchestrator tab, where you can orchestrate all the available ASOA services.
+   - Flutter App tab, which hosts the Flutter application.
+3. If there didn't occur any errors, you can procees with setting up CarMaker for simulation.
+4. File -> Open -> Select `empty_testarea_UNICAR` -> OK
+5. File -> IPGMovie
+6. Application -> Start & Connect
+7. Inside the ASOA Orchestrator tab, make sure the necessary services are registered with `ls` and then run `mk SIL`
+8. Make sure `realtime` is selected under the Simulation - Performance field.
+9. Start Simulation by clicking on the green `Start` button.
+10. The simulation should start and the steering angles should be displayed in the FZD GUI tab.
