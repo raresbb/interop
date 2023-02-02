@@ -96,21 +96,35 @@ int main() {
     std::thread control_t(&control_thread, pipe, control_output_freq);
 
     // ASOA service runtime
-    rtps_init();
+    auto asoa_driver = asoa_init();
+
+    // return in case of an error
+    if(asoa_driver == nullptr) {
+        std::cout << "Failed to initialize RTPS protocol." << std::endl;
+        return -1;
+    }
 
     char hardware_name[] = "Linux";
+    std::cout << "Hello, I am the " << hardware_name << "." << std::endl;
+    // make sure the hardware name equals the name specified in the configuration
+    if(strcmp(asoa_driver->hardware_name, "nosec") == 0 || strcmp(asoa_driver->hardware_name, hardware_name) != 0) {
+        std::cout << "WARNING: Hardware name does not match the name provided in the security configuration.";
+    }
+
     Runtime::init(hardware_name);
 
-    const char name[] = "FZDGUI";
-    auto *fzd_gui_service = new FZDGUIService(name, service_ptask_hz);
+    const char service_name[] = "FZDGUI";
+    auto *fzd_gui_service = new FZDGUIService(service_name, service_ptask_hz);
     Runtime::get()->publishService(fzd_gui_service);
 
     std::cout << "FZD GUI Service started..." << std::endl;
 
-    while (true) {
-        Runtime::get()->loop();
-        usleep(1000000);
-    }
+    Runtime::get()->loop();
+
+    // clean up after all services have been terminated
+    Runtime::get()->destroy();
+    asoa_destroy();
+    std::cout << "Runtime destroyed." << std::endl;
 
     control_t.join();
     close(pipe);

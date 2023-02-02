@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(${PROJECT_SOURCE_DIR})
 
 # Include libraries
-find_package(asoa_core 0.3 REQUIRED)
+find_package(asoa_core 0.4 REQUIRED)
 
 
 # Service executables
