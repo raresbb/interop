@@ -36,7 +36,7 @@ class VehicleFrame extends StatelessWidget {
             children: [
               Positioned(
                 top: vehicleYMargin,
-                left: vehicleXMargin,
+                left: vehicleXMargin + 50,
                 child: Wheel(
                   key: const Key('fl'),
                   angle: angleFL,
@@ -44,7 +44,7 @@ class VehicleFrame extends StatelessWidget {
               ),
               Positioned(
                 top: vehicleYMargin,
-                right: 0,
+                right: 50,
                 child: Wheel(
                   key: const Key('fr'),
                   angle: angleFR,
@@ -52,7 +52,7 @@ class VehicleFrame extends StatelessWidget {
               ),
               Positioned(
                 bottom: vehicleYMargin,
-                left: vehicleXMargin,
+                left: vehicleXMargin + 50,
                 child: Wheel(
                   key: const Key('rl'),
                   angle: angleRL,
@@ -61,7 +61,7 @@ class VehicleFrame extends StatelessWidget {
               ),
               Positioned(
                 bottom: vehicleYMargin,
-                right: 0,
+                right: 50,
                 child: Wheel(
                   key: const Key('rr'),
                   angle: angleRR,
@@ -71,8 +71,8 @@ class VehicleFrame extends StatelessWidget {
               // front axles
               Positioned(
                 top: vehicleYMargin + 150,
-                left: vehicleXMargin + 40,
-                right: vehicleXMargin + 40,
+                left: vehicleXMargin + 100,
+                right: vehicleXMargin + 100,
                 child: Container(
                   height: 8,
                   decoration: BoxDecoration(
@@ -84,8 +84,8 @@ class VehicleFrame extends StatelessWidget {
               // rear axles
               Positioned(
                 bottom: vehicleYMargin + 150,
-                left: vehicleXMargin + 40,
-                right: vehicleXMargin + 40,
+                left: vehicleXMargin + 100,
+                right: vehicleXMargin + 100,
                 child: Container(
                   height: 8,
                   decoration: BoxDecoration(

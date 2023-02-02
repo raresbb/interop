@@ -58,7 +58,9 @@ void control_thread(int pipe, double output_freq) {
         write(pipe, &angles, sizeof(angles));
 
         // Wait for a certain af time to achieve a constant updating frequency
-        std::this_thread::sleep_for(std::chrono::nanoseconds(int(1.0 / output_freq * 1e9)));
+        //std::this_thread::sleep_for(std::chrono::nanoseconds(int(1.0 / output_freq * 1e9)));
+        // sleep for 100 ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     std::cout << "Control thread terminated successfully!" << std::endl;
