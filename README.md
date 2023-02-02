@@ -108,9 +108,9 @@ Start a terminal and run `sudo apt update`. Now proceed with the following comma
 
 # Testing
 
-There is a script for automating the test setup.
+The **FZD GUI** repository contains a testing setup script, which will start all required services and applications. Follow the steps below to test the project:
 
-1. Inside the project root execute: directory: `./test.sh`
+1. Open a terminal **inside the project root** and run `./test.sh`.
 2. There should be a total of 5 terminal tabs open by now and several programs should have started.
    - The main tab, where you executed the testing script.
    - CarMaker tab, which hosts the CarMaker application.
@@ -122,6 +122,6 @@ There is a script for automating the test setup.
 5. File -> IPGMovie
 6. Application -> Start & Connect
 7. Inside the ASOA Orchestrator tab, make sure the necessary services are registered with `ls` and then run `mk SIL`
-8. Make sure `realtime` is selected under the Simulation - Performance field.
+8. Make sure `realtime` is selected under the Simulation - Performance field.)
 9. Start Simulation by clicking on the green `Start` button.
 10. The simulation should start and the steering angles should be displayed in the FZD GUI tab.
