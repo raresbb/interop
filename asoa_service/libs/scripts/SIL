@@ -1,0 +1,22 @@
+#c CM:FZS:state4ftr:FZS -> Linux:FDR_LW:state4ftr:FDRLW
+#c CM:DD:dyn_state:VL -> Linux:FDR_LW:dyn_state:VL
+#c CM:DD:dyn_state:VR -> Linux:FDR_LW:dyn_state:VR
+#c CM:DD:dyn_state:HL -> Linux:FDR_LW:dyn_state:HL
+#c CM:DD:dyn_state:HR -> Linux:FDR_LW:dyn_state:HR
+
+#c Linux:FDR_LW:setDynMod:VL -> CM:DD:setDynMod:VL
+#c Linux:FDR_LW:setDynMod:VR -> CM:DD:setDynMod:VR
+#c Linux:FDR_LW:setDynMod:HL -> CM:DD:setDynMod:HL
+#c Linux:FDR_LW:setDynMod:HR -> CM:DD:setDynMod:HR
+
+c CM:FZS:state4ftr:FZS -> Linux:FZDGUI:state4ftr
+c CM:DD:dyn_state:VL -> Linux:FZDGUI:dyn_state:FL
+c CM:DD:dyn_state:VR -> Linux:FZDGUI:dyn_state:FR
+c CM:DD:dyn_state:HL -> Linux:FZDGUI:dyn_state:RL
+c CM:DD:dyn_state:HR -> Linux:FZDGUI:dyn_state:RR
+#c Linux:FZDGUI:ctrlCom -> Linux:FDR_LW:ctrlCom:FDRLW
+
+l CM:DD active
+l CM:FZS active
+l Linux:FZDGUI active
+
