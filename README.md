@@ -106,7 +106,7 @@ Start a terminal and run `sudo apt update`. Now proceed with the following comma
 
 - Install [cm-asoa-service](https://git.rwth-aachen.de/fzd/unicar-agil/dienste-repositories/cm-asoa-service) as described in its respective README as it might have additional dependencies to be installed.
 
-- Install Dart and Flutter:
+- Install Dart:
 Install Dart manually:
 1. Download the Dart SDK for ARM Linux from the official Dart website: https://dart.dev/tools/sdk/archive
 2. Extract the contents of the downloaded archive to a directory on the Raspberry Pi, for example `/opt/dart-sdk`.
@@ -116,6 +116,10 @@ Install Dart manually:
    ```
 4. Save the file and run the command source `~/.bashrc` to apply the changes.
 5. Verify that Dart is installed by running the command `dart --version`.
+
+- Install Flutter:
+`https://docs.flutter.dev/get-started/install/linux`
+
 Open a terminal **inside the project root** and run `./install_flutter.sh`.
 
 # Testing
