@@ -1,16 +1,20 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-#include <unistd.h>
 #include <csignal>
 #include <math.h>
 #include <future>
 #include <atomic>
-#include <string>
 #include <functional>
-#include <fcntl.h>
+#include <string>
+#include <sstream>
+#include <cstring>
+#include <cstdlib>
+#include <cstdio>
+#include <unistd.h>
 #include <sys/types.h>
-#include <sys/stat.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #include <asoa/core/runtime.hpp>
 #include "include/asoa_service/service.hpp"
 #include "extern/inih/INIReader.h"
@@ -33,7 +37,7 @@ void sigint_handler(int) {
     }
 }
 
-void control_thread(int pipe, double output_freq) {
+void control_thread(int sock, double output_freq) {
 
     // Init variables
     fzd_gui::dyn_state dyn_stateFL{};
@@ -55,7 +59,28 @@ void control_thread(int pipe, double output_freq) {
         angles.angle_RL = dyn_stateRL.wheel_angle_deg * M_PI / 180.0;
         
         // Send the current state to the GUI
-        write(pipe, &angles, sizeof(angles));
+        /*
+        int result = send(sock, &angles, sizeof(angles), 0);
+        if (result == -1) {
+            std::cerr << "send failed: " << std::strerror(errno) << std::endl;
+        }
+        */
+        // TO BE DELETED - START
+        std::cout << "Values: " << angles.angle_FR  << ", " << angles.angle_FL << ", " << angles.angle_RR << ", " << angles.angle_RL << std::endl;
+
+        // Pack the values into a string in the format "val1,val2,val3,val4"
+        std::ostringstream ss;
+        ss << angles.angle_FR << "," << angles.angle_FL << "," << angles.angle_RR << "," << angles.angle_RL;
+        std::string values_str = ss.str();
+        
+        // If connection is successful, send the values to the server and close the socket
+        int result = send(sock, values_str.c_str(), values_str.length(), 0);
+        if (result == -1) {
+            std::cerr << "send failed: " << std::strerror(errno) << std::endl;
+        }
+        close(sock);
+
+        // TO BE DELETED - END
 
         // Wait for a certain af time to achieve a constant updating frequency
         //std::this_thread::sleep_for(std::chrono::nanoseconds(int(1.0 / output_freq * 1e9)));
@@ -79,21 +104,59 @@ int main() {
     double control_output_freq = ini_reader.GetReal("Update Frequencies", "control_output_hz", -1);
     double service_ptask_hz = ini_reader.GetReal("Update Frequencies", "service_ptask_hz", -1);
     
-    if (access("/tmp/AnglesPipe", F_OK) == -1) {
-        if (mkfifo("/tmp/AnglesPipe", 0666) == -1) {
-            std::cout << "Error creating named pipe" << std::endl;
-            return 1;
-        }
+    // Resolve the IP address and port
+    const char* ip = "192.168.1.4"; // Replace with your desired IP address
+    const char* port = "1234"; // Replace with your desired port
+    addrinfo hints = {};
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_protocol = IPPROTO_TCP;
+    addrinfo* addr;
+    int result = getaddrinfo(ip, port, &hints, &addr);
+    if (result != 0) {
+        std::cerr << "getaddrinfo failed: " << gai_strerror(result) << std::endl;
+        return 1;
     }
 
-    int pipe = open("/tmp/AnglesPipe", O_RDWR);
-    if (pipe == -1) {
-        std::cout << "Error opening named pipe" << std::endl;
+    // Create the socket
+    int sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+    if (sock == -1) {
+        std::cerr << "socket failed: " << std::strerror(errno) << std::endl;
+        freeaddrinfo(addr);
+        return 1;
+    }
+
+    // Connect to the server
+    result = connect(sock, addr->ai_addr, (int)addr->ai_addrlen);
+    if (result == -1 && errno != EINPROGRESS) {
+        std::cerr << "connect failed: " << std::strerror(errno) << std::endl;
+        close(sock);
+        freeaddrinfo(addr);
+        return 1;
+    }
+
+    // Wait for the connection to be established or until a timeout occurs
+    fd_set write_fds;
+    FD_ZERO(&write_fds);
+    FD_SET(sock, &write_fds);
+    timeval timeout = {};
+    timeout.tv_sec = 5; // 5 second timeout
+    result = select(sock + 1, NULL, &write_fds, NULL, &timeout);
+    if (result == -1) {
+        std::cerr << "select failed: " << std::strerror(errno) << std::endl;
+        close(sock);
+        freeaddrinfo(addr);
+        return 1;
+    }
+    else if (result == 0) {
+        std::cerr << "connect timed out" << std::endl;
+        close(sock);
+        freeaddrinfo(addr);
         return 1;
     }
 
     // Control application runtime
-    std::thread control_t(&control_thread, pipe, control_output_freq);
+    std::thread control_t(&control_thread, sock, control_output_freq);
 
     // ASOA service runtime
     auto asoa_driver = asoa_init();
@@ -127,8 +190,8 @@ int main() {
     std::cout << "Runtime destroyed." << std::endl;
 
     control_t.join();
-    close(pipe);
-    unlink("/tmp/AnglesPipe");
+    close(sock);
+    freeaddrinfo(addr);
 
     return 0;
 };
