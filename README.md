@@ -109,12 +109,16 @@ Start a terminal and run `sudo apt update`. Now proceed with the following comma
 - Install Dart:
 Install Dart manually:
 1. Download the Dart SDK for ARM Linux from the official Dart website: https://dart.dev/tools/sdk/archive
-2. Extract the contents of the downloaded archive to a directory on the Raspberry Pi, for example `/opt/dart-sdk`.
+2. Extract the contents of the downloaded archive 
+3. Move the extracted directory to a suitable location on your Raspberry Pi. For example, you can move it to the `/usr/lib `directory by running the following command:
+```
+      sudo mv dart-sdk /usr/lib/
+```
 3. Add the bin directory of the Dart SDK to the PATH environment variable by adding the following line to your `.bashrc` file:
    ```
-      export PATH="$PATH:/opt/dart-sdk/bin"
+      export PATH="$PATH:/usr/lib//dart-sdk/bin"
    ```
-4. Save the file and run the command source `~/.bashrc` to apply the changes.
+4. Save the file and run the command source `~/.bashrc` to apply the changes or open a new terminal window
 5. Verify that Dart is installed by running the command `dart --version`.
 
 - Install Flutter:
