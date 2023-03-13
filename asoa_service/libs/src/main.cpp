@@ -18,6 +18,7 @@
 #include <asoa/core/runtime.hpp>
 #include "include/asoa_service/service.hpp"
 #include "extern/inih/INIReader.h"
+#include <mutex>
 
 struct Angles {
     double angle_FR;
@@ -26,9 +27,11 @@ struct Angles {
     double angle_RL;
 };
 
+// declare a mutex to protect the socket
+std::mutex sock_mutex;
+
 // In the GNUC Library, sig_atomic_t is a typedef for int, which is atomic on all systems that are supported by the GNUC Library
 volatile sig_atomic_t do_shutdown = 0;
-
 void sigint_handler(int) {
     if (do_shutdown == 0) {
         do_shutdown = 1;
@@ -37,7 +40,7 @@ void sigint_handler(int) {
     }
 }
 
-void control_thread(int sock, double output_freq) {
+void control_thread(int sock, const addrinfo* addr, const double& output_freq) {
 
     // Init variables
     fzd_gui::dyn_state dyn_stateFL{};
@@ -52,40 +55,62 @@ void control_thread(int sock, double output_freq) {
         fzd_gui_interface::rx_dyn_stateRL(dyn_stateRL);
         fzd_gui_interface::rx_dyn_stateRR(dyn_stateRR);
 
-        Angles angles;
-        angles.angle_FR = dyn_stateFR.wheel_angle_deg * M_PI / 180.0;
-        angles.angle_FL = dyn_stateFL.wheel_angle_deg * M_PI / 180.0;
-        angles.angle_RR = dyn_stateRR.wheel_angle_deg * M_PI / 180.0;
-        angles.angle_RL = dyn_stateRL.wheel_angle_deg * M_PI / 180.0;
+        const Angles angles{
+            .angle_FR = dyn_stateFR.wheel_angle_deg * M_PI / 180.0,
+            .angle_FL = dyn_stateFL.wheel_angle_deg * M_PI / 180.0,
+            .angle_RR = dyn_stateRR.wheel_angle_deg * M_PI / 180.0,
+            .angle_RL = dyn_stateRL.wheel_angle_deg * M_PI / 180.0
+        };
         
-        // Send the current state to the GUI
-        /*
-        int result = send(sock, &angles, sizeof(angles), 0);
-        if (result == -1) {
-            std::cerr << "send failed: " << std::strerror(errno) << std::endl;
-        }
-        */
         // TO BE DELETED - START
         std::cout << "Values: " << angles.angle_FR  << ", " << angles.angle_FL << ", " << angles.angle_RR << ", " << angles.angle_RL << std::endl;
+        // TO BE DELETED - END
 
         // Pack the values into a string in the format "val1,val2,val3,val4"
         std::ostringstream ss;
         ss << angles.angle_FR << "," << angles.angle_FL << "," << angles.angle_RR << "," << angles.angle_RL;
         std::string values_str = ss.str();
         
-        // If connection is successful, send the values to the server and close the socket
-        int result = send(sock, values_str.c_str(), values_str.length(), 0);
+        // Lock the mutex before accessing the socket
+        std::unique_lock<std::mutex> lock(sock_mutex);
+
+        // Connect to the server
+        int result = connect(sock, addr->ai_addr, (int)addr->ai_addrlen);
+        if (result == -1 && errno != EINPROGRESS) {
+            std::cerr << "connect failed: " << std::strerror(errno) << std::endl;
+            // Release the lock before returning
+            lock.unlock();
+            close(sock);
+            return;
+        }
+
+        result = send(sock, values_str.c_str(), values_str.length(), 0);
         if (result == -1) {
             std::cerr << "send failed: " << std::strerror(errno) << std::endl;
         }
+        // Release the lock before closing the socket
+        lock.unlock();
         close(sock);
 
-        // TO BE DELETED - END
+        // Lock the mutex before creating a new socket
+        lock.lock();
+
+        // Create a new socket for the next iteration
+        sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
+        if (sock == -1) {
+            std::cerr << "socket failed: " << std::strerror(errno) << std::endl;
+            // Release the lock before returning
+            lock.unlock();
+            return;
+        }
+
+        // Release the lock after creating the new socket
+        lock.unlock();
 
         // Wait for a certain af time to achieve a constant updating frequency
         //std::this_thread::sleep_for(std::chrono::nanoseconds(int(1.0 / output_freq * 1e9)));
-        // sleep for 100 ms
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        // sleep for 1000 ms
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 
     std::cout << "Control thread terminated successfully!" << std::endl;
@@ -101,8 +126,8 @@ int main() {
     if (ini_reader.ParseError() < 0) {
         throw std::runtime_error("Can't load configuration file " + config_file_path);
     }
-    double control_output_freq = ini_reader.GetReal("Update Frequencies", "control_output_hz", -1);
-    double service_ptask_hz = ini_reader.GetReal("Update Frequencies", "service_ptask_hz", -1);
+    const double control_output_freq = ini_reader.GetReal("Update Frequencies", "control_output_hz", -1);
+    const double service_ptask_hz = ini_reader.GetReal("Update Frequencies", "service_ptask_hz", -1);
     
     // Resolve the IP address and port
     const std::string ip = ini_reader.Get("IP Address", "ip_address", ""); // change this to the IP address of your receiver
@@ -112,52 +137,31 @@ int main() {
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
     addrinfo* addr;
-    int result = getaddrinfo(ip.c_str(), port.c_str(), &hints, &addr);
+    int addrinfo_result = getaddrinfo(ip.c_str(), port.c_str(), &hints, &addr);
 
-    if (result != 0) {
-        std::cerr << "getaddrinfo failed: " << gai_strerror(result) << std::endl;
+    if (addrinfo_result != 0) {
+        std::cerr << "getaddrinfo failed: " << gai_strerror(addrinfo_result) << std::endl;
         return 1;
     }
+
+     // Lock the mutex before creating the socket
+    std::unique_lock<std::mutex> lock(sock_mutex);
 
     // Create the socket
     int sock = socket(addr->ai_family, addr->ai_socktype, addr->ai_protocol);
     if (sock == -1) {
         std::cerr << "socket failed: " << std::strerror(errno) << std::endl;
         freeaddrinfo(addr);
+        // Release the lock before returning
+        lock.unlock();
         return 1;
     }
 
-    // Connect to the server
-    result = connect(sock, addr->ai_addr, (int)addr->ai_addrlen);
-    if (result == -1 && errno != EINPROGRESS) {
-        std::cerr << "connect failed: " << std::strerror(errno) << std::endl;
-        close(sock);
-        freeaddrinfo(addr);
-        return 1;
-    }
-
-    // Wait for the connection to be established or until a timeout occurs
-    fd_set write_fds;
-    FD_ZERO(&write_fds);
-    FD_SET(sock, &write_fds);
-    timeval timeout = {};
-    timeout.tv_sec = 5; // 5 second timeout
-    result = select(sock + 1, NULL, &write_fds, NULL, &timeout);
-    if (result == -1) {
-        std::cerr << "select failed: " << std::strerror(errno) << std::endl;
-        close(sock);
-        freeaddrinfo(addr);
-        return 1;
-    }
-    else if (result == 0) {
-        std::cerr << "connect timed out" << std::endl;
-        close(sock);
-        freeaddrinfo(addr);
-        return 1;
-    }
+    // Release the lock after creating the socket
+    lock.unlock();
 
     // Control application runtime
-    std::thread control_t(&control_thread, sock, control_output_freq);
+    std::thread control_t(&control_thread, sock, addr, std::ref(control_output_freq));
 
     // ASOA service runtime
     auto asoa_driver = asoa_init();
@@ -191,6 +195,7 @@ int main() {
     std::cout << "Runtime destroyed." << std::endl;
 
     control_t.join();
+    lock.unlock();
     close(sock);
     freeaddrinfo(addr);
 
