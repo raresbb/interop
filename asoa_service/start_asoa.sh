@@ -12,8 +12,8 @@ echo "--- TEST SETUP START --- Only compatible with standard linux console!"
 
 # path variables
 cm_asoa_service_path=$(cd .. && pwd)/cm-asoa-service
-fzd_gui_src_path=$(pwd)/libs/src
-fzd_gui_scripts_path=$(pwd)/libs/scripts
+fzd_gui_src_path=$(pwd)/src
+fzd_gui_scripts_path=$(pwd)/scripts
 #flutter_root_folder=$(pwd)
 
 # Start CarMaker if not already running

@@ -108,9 +108,7 @@ void control_thread(int sock, const addrinfo* addr, const double& output_freq) {
         lock.unlock();
 
         // Wait for a certain af time to achieve a constant updating frequency
-        //std::this_thread::sleep_for(std::chrono::nanoseconds(int(1.0 / output_freq * 1e9)));
-        // sleep for 1000 ms
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(int(1.0 / output_freq * 1e3)));
     }
 
     std::cout << "Control thread terminated successfully!" << std::endl;
@@ -126,7 +124,7 @@ int main() {
     if (ini_reader.ParseError() < 0) {
         throw std::runtime_error("Can't load configuration file " + config_file_path);
     }
-    const double control_output_freq = ini_reader.GetReal("Update Frequencies", "control_output_hz", -1);
+    const double angle_update_freq = ini_reader.GetReal("Update Frequencies", "angle_update_rate_hz", -1);
     const double service_ptask_hz = ini_reader.GetReal("Update Frequencies", "service_ptask_hz", -1);
     
     // Resolve the IP address and port
@@ -161,7 +159,7 @@ int main() {
     lock.unlock();
 
     // Control application runtime
-    std::thread control_t(&control_thread, sock, addr, std::ref(control_output_freq));
+    std::thread control_t(&control_thread, sock, addr, std::ref(angle_update_freq));
 
     // ASOA service runtime
     auto asoa_driver = asoa_init();

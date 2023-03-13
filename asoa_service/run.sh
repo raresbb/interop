@@ -11,7 +11,7 @@ ETHERNET_INTERFACE_NAME="enp0s31f6"
 #
 #
 
-fzd_gui_BIN=libs/src/fzd_gui
+fzd_gui_BIN=src/fzd_gui
 fzd_gui_PROCESS_NAME=fzd_gui
 
 # Close the running manual control process
@@ -49,7 +49,7 @@ do
   if pidof $fzd_gui_PROCESS_NAME >/dev/null; then
     echo -e "\nFZD GUI Service running!\nStarting Orchestrator..."
     sleep 1
-    cd ./libs/scripts || (echo "FZD GUI scripts directory not found!" && exit 1)
+    cd ./scripts || (echo "FZD GUI scripts directory not found!" && exit 1)
     gnome-terminal --tab --title="ASOA Orchestrator" -- asoa_orchestrator
     break
   fi

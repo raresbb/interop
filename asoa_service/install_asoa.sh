@@ -20,4 +20,4 @@ echo -e "\n\033[0;33m--- INSTALLING DART DEPENDENCIES ---\033[0m\n"
 dart pub get
 
 echo -e "\n\033[0;33m--- BUILDING EXECUTABLE ---\033[0m\n"
-cd libs/scripts && ./buildService.sh
+cd scripts && ./buildService.sh
