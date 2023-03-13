@@ -2,11 +2,6 @@
 
 This repository contains a GUI application, which provides an easy way to visualize the current steering angles of Unicar vehicles.
 
-# Usage
-
-Define your **network interface name** responsible for receiving PTP signals and synchronizing the system time with the vehicle.
-This is done by changing a variable called `ETHERNET_INTERFACE_NAME` at the very top of [run.sh](run.sh). Afterwards, run this bash script by typing `./run.sh` from project root.
-
 # Dependencies and Requirements
 
 ## System Requirements
