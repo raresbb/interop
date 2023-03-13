@@ -105,14 +105,15 @@ int main() {
     double service_ptask_hz = ini_reader.GetReal("Update Frequencies", "service_ptask_hz", -1);
     
     // Resolve the IP address and port
-    const char* ip = "192.168.1.4"; // Replace with your desired IP address
-    const char* port = "1234"; // Replace with your desired port
+    const std::string ip = ini_reader.Get("IP Address", "ip_address", ""); // change this to the IP address of your receiver
+    const std::string port = ini_reader.Get("IP Address", "port", ""); // Replace with your desired port
     addrinfo hints = {};
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_protocol = IPPROTO_TCP;
     addrinfo* addr;
-    int result = getaddrinfo(ip, port, &hints, &addr);
+    int result = getaddrinfo(ip.c_str(), port.c_str(), &hints, &addr);
+
     if (result != 0) {
         std::cerr << "getaddrinfo failed: " << gai_strerror(result) << std::endl;
         return 1;
