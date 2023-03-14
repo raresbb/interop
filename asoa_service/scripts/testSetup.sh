@@ -12,7 +12,7 @@ function shutdown() {
 echo "--- TEST SETUP START --- Only compatible with standard linux console!"
 
 # path variables
-cm_asoa_service_path=$(cd ../../../ && pwd)/cm-asoa-service
+cm_asoa_service_path=$(cd ../../ && pwd)/cm-asoa-service
 fzd_gui_src_path=$(cd .. && pwd)/src
 fzd_gui_scripts_path=$(cd .. && pwd)/scripts
 fdr_lw_asoa_build_path=$(cd ../../ && pwd)/fdr_lw-asoa/build
