@@ -2,14 +2,7 @@
 
 This repository contains a GUI application, which provides an easy way to visualize the current steering angles of Unicar vehicles.
 
-# Usage
-
-Define your **network interface name** responsible for receiving PTP signals and synchronizing the system time with the vehicle.
-This is done by changing a variable called `ETHERNET_INTERFACE_NAME` at the very top of [run.sh](run.sh). Afterwards, run this bash script by typing `./run.sh` from project root.
-
-# Dependencies and Requirements
-
-## System Requirements
+## Dependencies and Requirements
 
 ### Ubuntu
 
@@ -78,9 +71,9 @@ Start a terminal and run `sudo apt update`. Now proceed with the following comma
 
            Note that you have to register yourself on the website before being able to download, though.
 
-# Cloning and Installing
+## Installation
 
-## Cloning
+### Cloning
 - Besides the FZD GUI service, there is one other service required. Therefore, it is necessary to create a parent folder <name_parent_folder> and **clone** both services inside it. The repositories for each service can be found under the following links:
    1. [cm-asoa-service](https://git.rwth-aachen.de/fzd/unicar-agil/dienste-repositories/cm-asoa-service)
    1. [fzd_gui](https://git.rwth-aachen.de/fzd/unicar-agil/dienste-repositories/manual_control)
@@ -100,7 +93,7 @@ Start a terminal and run `sudo apt update`. Now proceed with the following comma
 
 - **<font color="red"> The parent folder structure and names of the subfolders are important for the testing process.</font>**
 
-## Installation
+### Installation
 
 - The **FZD GUI** repository contains an installation setup script. Therefore, open a terminal **inside the project root** and run `./install.sh`. This script will install all required dependencies and build the project.
 
@@ -126,7 +119,7 @@ Install Dart manually:
 
 Open a terminal **inside the project root** and run `./install_flutter.sh`.
 
-# Testing
+## Testing
 
 The **FZD GUI** repository contains a testing setup script, which will start all required services and applications. Follow the steps below to test the project:
 
