@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:angle_visualizer/vehicle.dart';
+import 'package:yaml/yaml.dart';
 
 class AngleData {
   double angleFR;
@@ -45,7 +46,10 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
+
   late AngleData _angles;
+  late String _ipAddress;
+  late int _port;
 
   _RootPageState() {
     _angles = AngleData(angleFR: 0.0, angleFL: 0.0, angleRR: 0.0, angleRL: 0.0);
@@ -54,13 +58,27 @@ class _RootPageState extends State<RootPage> {
   @override
   void initState() {
     super.initState();
+    _readConfigFile();
     _readAngleData();
+  }
+
+    Future<void> _readConfigFile() async {
+    final configYamlFile = File('config.yaml');
+    if (await configYamlFile.exists()) {
+      final configYaml = loadYaml(await configYamlFile.readAsString());
+      _ipAddress = configYaml['ip_address'];
+      _port = configYaml['port'];
+      print("IP address: $_ipAddress");
+      print("Port: $_port");
+    } else {
+      print('Config file not found.');
+    }
   }
 
 // read angle data from server socket
   Future<void> _readAngleData() async {
     // Bind to the specified IP address and port
-    var server = await ServerSocket.bind('127.0.0.1', 1234);
+    var server = await ServerSocket.bind(_ipAddress, _port);
     print('Listening on ${server.address.address}:${server.port}');
 
     // Continuously listen for incoming connections
@@ -93,7 +111,7 @@ class _RootPageState extends State<RootPage> {
       body: Center(
         // child is the vehicle frame
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 200, minHeight: 400),
+          constraints: const BoxConstraints(),
           child: VehicleFrame(
             angleFL: _angles.angleFL,
             angleFR: _angles.angleFR,
